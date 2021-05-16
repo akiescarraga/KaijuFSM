@@ -36,7 +36,7 @@ class Kaiju {
      initialMove  : String
      - initial move of the kaiju
      */
-    public String name;
+    private String name;
     public String [] states;
     public TreeMap<String, Move> moves;
     public TreeMap<String, String[]> transitions;
@@ -44,6 +44,7 @@ class Kaiju {
     public String initialState;
     public int maxHp;
     public String initialMove;
+    public int currHp;
 
 
 
@@ -99,7 +100,10 @@ class Kaiju {
      */
     public String getStatus(){
         // TODO: Place your code here
-        return ;
+        if(2 * getHP() > this.maxHp)
+            return "ok";
+        else
+            return "hurt";
     }
 
     /**
@@ -109,7 +113,7 @@ class Kaiju {
      */
     public int getHP(){
         // TODO: Place your code here
-        return ;
+        return this.currHp;
     }
 
     /**
