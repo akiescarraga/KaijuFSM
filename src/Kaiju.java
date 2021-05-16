@@ -61,6 +61,7 @@ class Kaiju {
         this.initialState = initialState;
         this.maxHp = maxHp;
         this.initialMove = initialMove;
+        this.currHp = maxHp;
 
         for(Move m: moves) {
             this.moves.put(m.name, m);
@@ -150,14 +151,11 @@ class Kaiju {
 
         }
 
+        targetKaiju.currHp -= damage;
+        this.currHp -= hpCost;
 
-
-        targetKaiju.currHp = targetKaiju.currHp - damage;
-        this.currHp = this.currHp - hpCost;
-
-
-
-
+        System.out.println(getName() + "used" + moveName);
+        System.out.println(getName() + "HP:" + getHP() + ";" + targetKaiju.getName() + "HP:" + targetKaiju.getHP());
     }
 }
 
@@ -192,8 +190,23 @@ public class CombatSim {
      a draw, return "DRAW". If there is no winner yet,
      value is "NONE"
      */
-    public String stepRound(){
+    public String stepRound() {
         // TODO: Place your code here
+
+        // kaiji1 first turn
+        stepTurn(1);
+
+        if (this.k2.getHP() > 0)
+            stepTurn(2);
+
+        if (this.k1.getHP() > 0 || this.k2.getHP() > 0)
+            return "NONE";
+        else if (this.k2.getHP() == 0 && this.k1.getHP() == 0) // enemy kaiju
+            return "DRAW";
+        else if (this.k1.getHP() < 0)
+            return this.k2.getName();
+        else if (this.k2.getHP() < 0)
+            return this.k1.getName();
     }
 
     /**
@@ -206,8 +219,9 @@ public class CombatSim {
      both kaiju got knocked out, "LOSS" if only the kaiju taking their turn was
      knocked out, and "NONE" otherwise
      */
-    public String stepTurn(int kaijuId){
+    public String stepTurn(int kaijuId) {
         // TODO: Place your code here
+
     }
 
     public static void main(String[] args) throws Exception{
