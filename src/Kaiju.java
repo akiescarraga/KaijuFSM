@@ -99,6 +99,7 @@ class Kaiju {
      */
     public String getStatus(){
         // TODO: Place your code here
+        return ;
     }
 
     /**
@@ -108,6 +109,7 @@ class Kaiju {
      */
     public int getHP(){
         // TODO: Place your code here
+        return ;
     }
 
     /**
@@ -117,6 +119,7 @@ class Kaiju {
      */
     public String getName(){
         // TODO: Place your code here
+        return this.name;
     }
 
     /**
@@ -129,6 +132,7 @@ class Kaiju {
     public void useMove(String moveName, Kaiju targetKaiju){
         // TODO: Place your code here
         // You may print in this function.
+
     }
 }
 
@@ -140,6 +144,8 @@ public class CombatSim {
     public static BufferedReader br;
     // TODO: Place your code here
 
+    public Kaiju k1;
+    public Kaiju k2;
     /**
      This constructor initializes the values of the kaiju combat simulator
 
@@ -149,6 +155,8 @@ public class CombatSim {
      */
     public CombatSim(Kaiju kaiju1, Kaiju kaiju2) {
         // TODO: Place your code here
+        this.k1 = kaiju1;
+        this.k2 = kaiju2;
     }
 
     /**
