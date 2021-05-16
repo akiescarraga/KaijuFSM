@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -135,7 +136,27 @@ class Kaiju {
      */
     public void useMove(String moveName, Kaiju targetKaiju){
         // TODO: Place your code here
-        // You may print in this function.
+
+        int damage = 0, hpCost = 0;
+
+        Set<String> set1 = this.moves.keySet();
+
+        for(String key : set1) {
+            if(key.equals(moveName))
+            {
+              damage = this.moves.get(key).dmg;
+              hpCost = this.moves.get(key).cost;
+            }
+
+        }
+
+
+
+        targetKaiju.currHp = targetKaiju.currHp - damage;
+        this.currHp = this.currHp - hpCost;
+
+
+
 
     }
 }
@@ -280,6 +301,7 @@ class Move {
     public String name;
     public int cost;
     public int dmg;
+
     Move(String name, int cost, int dmg) {
         this.name = name;
         this.cost = cost;
