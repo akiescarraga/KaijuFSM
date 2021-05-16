@@ -37,14 +37,11 @@ public class Kaiju {
      initialMove  : String
      - initial move of the kaiju
      */
-
-
-
     public String name;
     public String [] states;
-    public Move [] moves;
-    public String [][] transitions;
-    public String [][] moveRules;
+    public TreeMap<String, Move> moves;
+    public TreeMap<String, String[]> transitions;
+    public TreeMap<String, String[]> moveRules;
     public String initialState;
     public int maxHp;
     public String initialMove;
@@ -55,20 +52,26 @@ public class Kaiju {
                  String[][] transitions, String[][] moveRules,
                  String initialState, int maxHp, String initialMove){
 
-
         this.name = name;
         this.states = states;
-        this.moves = moves;
-        this.transitions = transitions;
-        this.moveRules = moveRules;
+        this.moves = new TreeMap<String, Move>();
+        this.transitions = new TreeMap<String, String[]>();
+        this.moveRules = new TreeMap<String, String[]>();
         this.initialState = initialState;
         this.maxHp = maxHp;
         this.initialMove = initialMove;
 
+        for(Move m: moves) {
+            this.moves.put(m.name, m);
+        }
 
+        for(String[] tr: transitions) {
+            this.transitions.put(tr[0] + " " + tr[1] + " " + tr[2], tr);
+        }
 
-
-
+        for(String[] mr: moveRules) {
+            this.moveRules.put(mr[0] + " " + mr[1] + " " + mr[2], mr);
+        }
     }
 
     /**
@@ -82,9 +85,12 @@ public class Kaiju {
 
      Returns name of move to use in response.
      */
-    String applyTransition(String move, String status){
+    String applyTransition(String move, String status) {
         // TODO: fill this with your own code
-        return null;
+        String moves = moveRules.get(initialState + " " + move + " " + status)[3];
+        initialState = transitions.get(initialState + " " + move + " " + status)[3];
+
+        return moves;
     }
 
     public static void main(String[] args) throws IOException{
@@ -170,14 +176,9 @@ class Move {
     public String name;
     public int cost;
     public int dmg;
-
-
     Move(String name, int cost, int dmg) {
         this.name = name;
         this.cost = cost;
         this.dmg = dmg;
     }
-
-
-
 }
