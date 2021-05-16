@@ -18,24 +18,38 @@ class Kaiju {
      Parameters:
      name          : String
      - name of kaiju
+
+
      states        : array-like of size (|Q|, )
      - list of Strings representing the states
+
      moves         : array-like of size (|M|,3)
      - list of moves. Each move is in the format (name,hpCost,dmg)
+
      transitions   : array-like of size (|f|,4)
      - list of transitions, each in the format
      (sourceState,moveName,status,destinationState) which denotes
      f(sourceState,moveName,status) = destinationState
+
+
      moveRules    : array-like of size (|f|,4)
      - list of transitions, each in the format
      (sourceState,moveName,status,responseMoveName) which denotes
      g(sourceState,moveName,status) = responseMoveName
+
+
      initialState : String
      - name of the initial state of the kaiju
+
+
      maxHp        : int
      - maximum hit points of the kaiju
+
+
      initialMove  : String
      - initial move of the kaiju
+
+
      */
     private String name;
     public String [] states;
@@ -221,6 +235,58 @@ public class CombatSim {
      */
     public String stepTurn(int kaijuId) {
         // TODO: Place your code here
+
+
+        Kaiju player;
+        Kaiju opponent;
+
+
+        if(kaijuId == 1)
+        {
+            player = this.k1;
+            opponent = this.k2;
+        }
+
+        else // k2's turn
+        {
+            player = this.k2;
+            opponent = this.k1;
+
+        }
+
+
+        if(opponent.currHp >= 1)
+        {
+            // use last move used by K2 as well as the status of k2
+            // temp : last move used by opponent
+            player.useMove(temp, opponent);
+            opponent.applyTransition( temp , player.getStatus());
+
+        }
+
+        //k1 = player
+        //k2 = opponent
+
+        if(player.currHp >= 1 && opponent.currHp <= 0)
+        {
+            return "WIN";
+        }
+
+        else if(player.currHp <= 0 && opponent.currHp <= 0)
+        {
+            return "DRAW";
+        }
+
+        else if(opponent.currHp >= 1 && player.currHp <= 0)
+        {
+            return "LOSS";
+        }
+
+        else
+        {
+            return "NONE";
+        }
+
 
     }
 
