@@ -7,9 +7,8 @@ import java.util.TreeMap;
 /**
  This class models the intelligence of a kaiju.
  */
-public class Kaiju {
-
-    // TODO: fill this with your own code
+class Kaiju {
+    // TODO: Place your code here
 
     /**
      This basic constructor initializes the values for the kaiju intelligence
@@ -93,17 +92,98 @@ public class Kaiju {
         return moves;
     }
 
-    public static void main(String[] args) throws IOException{
-        BufferedReader br = new BufferedReader(
-                new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+    /**
+     This method returns the status of this kaiju.
 
-        // declare variables
-        String[] statuses = {"ok", "hurt"}; // kaiju status
-        int maxHp, moveCtr, numInputs, stateCtr;
+     Returns a string indicating whether this kaiju is "ok" or "hurt".
+     */
+    public String getStatus(){
+        // TODO: Place your code here
+    }
+
+    /**
+     Returns the current hit points of this kaiju.
+
+     Returns an integer indicating the current hit points of the kaiju.
+     */
+    public int getHP(){
+        // TODO: Place your code here
+    }
+
+    /**
+     Returns the name of this kaiju.
+
+     Returns a string indicating the name of the kaiju.
+     */
+    public String getName(){
+        // TODO: Place your code here
+    }
+
+    /**
+     Uses a move on a target kaiju, updating the hit points of both kaiju.
+
+     Parameters:
+     moveName    : string - name of move to use on target kaiju
+     targetKaiju : Kaiju  - kaiju to use the move on
+     */
+    public void useMove(String moveName, Kaiju targetKaiju){
+        // TODO: Place your code here
+        // You may print in this function.
+    }
+}
+
+/**
+ This class represents a kaiju combat simulator.
+ */
+public class CombatSim {
+    public static StringBuilder sb;
+    public static BufferedReader br;
+    // TODO: Place your code here
+
+    /**
+     This constructor initializes the values of the kaiju combat simulator
+
+     Parameters:
+     kaiju1 : Kaiju - first kaiju in battle
+     kaiju2 : Kaiju - second kaiju in battle
+     */
+    public CombatSim(Kaiju kaiju1, Kaiju kaiju2) {
+        // TODO: Place your code here
+    }
+
+    /**
+     This method steps one round in the combat.
+
+     Returns:
+     winner : string - name of the winner of the round. If this round results in
+     a draw, return "DRAW". If there is no winner yet,
+     value is "NONE"
+     */
+    public String stepRound(){
+        // TODO: Place your code here
+    }
+
+    /**
+     This method steps one turn in the combat.
+
+     Parameters:
+     kaijuId : int - this value is 1 if it is kaiju1's turn and 2 otherwise
+
+     Returns "WIN" if the kaiju eliminated the opponent this turn, "DRAW" if
+     both kaiju got knocked out, "LOSS" if only the kaiju taking their turn was
+     knocked out, and "NONE" otherwise
+     */
+    public String stepTurn(int kaijuId){
+        // TODO: Place your code here
+    }
+
+    public static void main(String[] args) throws Exception{
+        br = new BufferedReader(new InputStreamReader(System.in));
+        sb = new StringBuilder();
+
+        int moveCtr;
         String initState, initMove, dump, name;
-        String[] states, parts;
-        String[][] transitions, moveFunc;
+        String[] parts;
         Move[] moves;
 
         // read moves
@@ -119,15 +199,42 @@ public class Kaiju {
             moves[cc] = new Move(name,cost,dmg);
         }
 
+        // read kaiju
+        Kaiju kaiju1 = readKaiju(moves);
+        Kaiju kaiju2 = readKaiju(moves);
+
+        // initialize combat simulator
+        CombatSim combatSim = new CombatSim(kaiju1,kaiju2);
+
+        String winner = "NONE";
+
+        while(winner.equals("NONE")){
+            winner = combatSim.stepRound();
+            if(winner.equals("DRAW")){
+                sb.append("It's a draw!\n");
+                continue;
+            }
+            if(!winner.equals("NONE")) {
+                sb.append(String.format("%s wins!\n",winner));
+            }
+        }
+
+        System.out.print(sb);
+    }
+
+    public static Kaiju readKaiju(Move[] moves) throws Exception {
+        // declare variables
+        String[] statuses = {"ok", "hurt"}; // kaiju status
+
         // read name
-        name = br.readLine().trim();
+        String name = br.readLine().trim();
 
         // read states
-        stateCtr = Integer.parseInt(br.readLine().trim());
-        states = br.readLine().trim().split(" ");
+        int stateCtr = Integer.parseInt(br.readLine().trim());
+        String[] states = br.readLine().trim().split(" ");
 
-        transitions = new String[stateCtr * moveCtr * 2][4];
-        moveFunc = new String[stateCtr * moveCtr * 2][4];
+        String[][] transitions = new String[stateCtr * moves.length * 2][4];
+        String[][] moveFunc = new String[stateCtr * moves.length * 2][4];
         int ind = 0;
 
         // read transition and move functions
@@ -147,30 +254,15 @@ public class Kaiju {
         }
 
         // read initial values
-        parts = br.readLine().trim().split(" ");
-        initState = parts[0];
-        maxHp = Integer.parseInt(parts[1]);
-        initMove = br.readLine().trim();
+        String[] parts = br.readLine().trim().split(" ");
+        String initState = parts[0];
+        int maxHp = Integer.parseInt(parts[1]);
+        String initMove = br.readLine().trim();
 
-        Kaiju k = new Kaiju(name,states,moves,transitions,moveFunc,initState,
+        return new Kaiju(name,states,moves,transitions,moveFunc,initState,
                 maxHp,initMove);
-
-        // read inputs
-        numInputs = Integer.parseInt(br.readLine().trim());
-
-        for(int cc = 0; cc < numInputs; cc++){
-            String move = br.readLine().trim();
-            String status = br.readLine().trim();
-            sb.append(
-                    String.format(
-                            "%s used %s\n",k.name,k.applyTransition(move,status)
-                    )
-            );
-        }
-        System.out.print(sb);
     }
 }
-
 
 class Move {
     public String name;
