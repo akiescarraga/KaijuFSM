@@ -37,10 +37,38 @@ public class Kaiju {
      initialMove  : String
      - initial move of the kaiju
      */
+
+
+
+    public String name;
+    public String [] states;
+    public Move [] moves;
+    public String [][] transitions;
+    public String [][] moveRules;
+    public String initialState;
+    public int maxHp;
+    public String initialMove;
+
+
+
     public Kaiju(String name, String[] states, Move[] moves,
                  String[][] transitions, String[][] moveRules,
                  String initialState, int maxHp, String initialMove){
-        // TODO: fill this with your own code
+
+
+        this.name = name;
+        this.states = states;
+        this.moves = moves;
+        this.transitions = transitions;
+        this.moveRules = moveRules;
+        this.initialState = initialState;
+        this.maxHp = maxHp;
+        this.initialMove = initialMove;
+
+
+
+
+
     }
 
     /**
@@ -142,9 +170,14 @@ class Move {
     public String name;
     public int cost;
     public int dmg;
+
+
     Move(String name, int cost, int dmg) {
         this.name = name;
         this.cost = cost;
         this.dmg = dmg;
     }
+
+
+
 }
