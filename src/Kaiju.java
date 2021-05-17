@@ -61,6 +61,9 @@ class Kaiju {
     public String initialMove;
     public int currHp;
 
+    public String lastMove; // tracking kaiju's last move
+    public boolean firstMove; // to indicate kaiju made first move
+
 
 
     public Kaiju(String name, String[] states, Move[] moves,
@@ -76,6 +79,8 @@ class Kaiju {
         this.maxHp = maxHp;
         this.initialMove = initialMove;
         this.currHp = maxHp;
+
+        this.firstMove = true;
 
         for(Move m: moves) {
             this.moves.put(m.name, m);
@@ -239,6 +244,7 @@ public class CombatSim {
 
         Kaiju player;
         Kaiju opponent;
+        String lastMove;
 
 
         if(kaijuId == 1)
@@ -254,15 +260,30 @@ public class CombatSim {
 
         }
 
+        if(player.firstMove = true)
+        {
+          lastMove = player.initialMove;
+        }
+
+        else
+        {
+            lastMove = opponent.lastMove;
+        }
+
 
         if(opponent.currHp >= 1)
         {
-            // use last move used by K2 as well as the status of k2
-            // temp : last move used by opponent
-            player.useMove(temp, opponent);
-            opponent.applyTransition( temp , player.getStatus());
+            // use last move used by opponent as well as the status of opponent
+            player.useMove(lastMove, opponent);
+            opponent.lastMove = opponent.applyTransition(lastMove, player.getStatus());
 
         }
+
+
+        this.k1.firstMove = false;
+        this.k2.firstMove = false;
+
+
 
         //k1 = player
         //k2 = opponent
