@@ -267,6 +267,7 @@ public class CombatSim {
 
         else
         {
+
             lastMove = opponent.lastMove;
         }
 
