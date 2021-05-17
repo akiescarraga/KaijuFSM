@@ -173,8 +173,18 @@ class Kaiju {
         targetKaiju.currHp -= damage;
         this.currHp -= hpCost;
 
+        if (this.currHp < 0)
+            this.currHp = 0;
+        if (targetKaiju.currHp < 0)
+            targetKaiju.currHp = 0;
+        if (this.currHp > this.maxHp)
+            this.currHp = this.maxHp;
+        if (targetKaiju.currHp > targetKaiju.maxHp)
+            targetKaiju.currHp = targetKaiju.maxHp;
+
+
         System.out.println(getName() + " used " + moveName);
-        System.out.println(getName() + " HP: " + getHP() + "; " + targetKaiju.getName() + "HP: " + targetKaiju.getHP());
+        System.out.println(getName() + " HP: " + getHP() + "; " + targetKaiju.getName() + " HP: " + targetKaiju.getHP());
     }
 }
 
