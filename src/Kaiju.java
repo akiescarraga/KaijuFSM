@@ -164,8 +164,8 @@ class Kaiju {
         for(String key : set1) {
             if(key.equals(moveName))
             {
-              damage = this.moves.get(key).dmg;
-              hpCost = this.moves.get(key).cost;
+                damage = this.moves.get(key).dmg;
+                hpCost = this.moves.get(key).cost;
             }
 
         }
@@ -173,8 +173,8 @@ class Kaiju {
         targetKaiju.currHp -= damage;
         this.currHp -= hpCost;
 
-        System.out.println(getName() + "used" + moveName);
-        System.out.println(getName() + "HP:" + getHP() + ";" + targetKaiju.getName() + "HP:" + targetKaiju.getHP());
+        System.out.println(getName() + " used " + moveName);
+        System.out.println(getName() + " HP: " + getHP() + "; " + targetKaiju.getName() + "HP: " + targetKaiju.getHP());
     }
 }
 
@@ -215,17 +215,21 @@ public class CombatSim {
         // kaiji1 first turn
         stepTurn(1);
 
+        String name = "";
+
         if (this.k2.getHP() > 0)
             stepTurn(2);
 
         if (this.k1.getHP() > 0 || this.k2.getHP() > 0)
-            return "NONE";
+            name = "NONE";
         else if (this.k2.getHP() == 0 && this.k1.getHP() == 0) // enemy kaiju
-            return "DRAW";
+            name = "DRAW";
         else if (this.k1.getHP() < 0)
-            return this.k2.getName();
+            name = this.k2.getName();
         else if (this.k2.getHP() < 0)
-            return this.k1.getName();
+            name = this.k1.getName();
+
+        return name;
     }
 
     /**
@@ -262,7 +266,7 @@ public class CombatSim {
 
         if(player.firstMove = true)
         {
-          lastMove = player.initialMove;
+            lastMove = player.initialMove;
         }
 
         else
