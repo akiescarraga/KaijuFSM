@@ -78,7 +78,7 @@ class Kaiju {
         this.maxHp = maxHp;
         this.initialMove = initialMove;
         this.currHp = maxHp;
-        this.lastMove = "";
+        this.lastMove = initialMove;
 
         for(Move m: moves) {
             this.moves.put(m.name, m);
@@ -280,10 +280,6 @@ public class CombatSim {
             opponent = this.k1;
 
         }
-
-
-
-
 
 
 
