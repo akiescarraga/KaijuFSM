@@ -62,7 +62,6 @@ class Kaiju {
     public int currHp;
 
     public String lastMove; // tracking kaiju's last move
-    public boolean firstMove; // to indicate kaiju made first move
 
 
 
@@ -111,6 +110,8 @@ class Kaiju {
         String moves = moveRules.get(initialState + " " + move + " " + status)[3];
         initialState = transitions.get(initialState + " " + move + " " + status)[3];
 
+        lastMove = moves;
+
         return moves;
     }
 
@@ -154,7 +155,7 @@ class Kaiju {
      moveName    : string - name of move to use on target kaiju
      targetKaiju : Kaiju  - kaiju to use the move on
      */
-    public void useMove(String moveName, Kaiju targetKaiju){
+    public void useMove(String moveName, Kaiju targetKaiju, StringBuilder sb){
         // TODO: Place your code here
 
         int damage = 0, hpCost = 0;
@@ -183,8 +184,8 @@ class Kaiju {
             targetKaiju.currHp = targetKaiju.maxHp;
 
 
-        System.out.println(getName() + " used " + moveName);
-        System.out.println(getName() + " HP: " + getHP() + "; " + targetKaiju.getName() + " HP: " + targetKaiju.getHP());
+
+        sb.append(String.format("%s used %s\n%s HP: %d; %s HP: %d\n", getName(), moveName, getName(), getHP(), targetKaiju.getName(), targetKaiju.getHP()));
     }
 }
 
@@ -198,6 +199,9 @@ public class CombatSim {
 
     public Kaiju k1;
     public Kaiju k2;
+
+
+    boolean initial = true;
     /**
      This constructor initializes the values of the kaiju combat simulator
 
@@ -261,6 +265,10 @@ public class CombatSim {
         String lastMove;
 
 
+        //k1 - player
+        //k2 - opponent
+
+
         if(kaijuId == 1)
         {
             player = this.k1;
@@ -274,54 +282,40 @@ public class CombatSim {
 
         }
 
-        if(player.firstMove = true)
+
+
+
+
+
+
+
+        if(initial)
         {
-            lastMove = player.initialMove;
+            player.useMove(player.initialMove, opponent, sb);
+            initial = false;
+
         }
+
 
         else
         {
 
-            lastMove = opponent.lastMove;
+            player.useMove(player.applyTransition(opponent.lastMove, opponent.getStatus()), opponent, sb);
+
+            if(player.currHp <= 0 && opponent.currHp <= 0)
+                return "DRAW";
+            else if(opponent.currHp <= 0)
+                return "WIN";
+            else if(player.currHp <= 0)
+                return "LOSS";
+
+
         }
 
 
-        if(opponent.currHp >= 1)
-        {
-            // use last move used by opponent as well as the status of opponent
-            player.useMove(lastMove, opponent);
-            opponent.lastMove = opponent.applyTransition(lastMove, player.getStatus());
 
-        }
+        return "NONE";
 
-
-        this.k1.firstMove = false;
-        this.k2.firstMove = false;
-
-
-
-        //k1 = player
-        //k2 = opponent
-
-        if(player.currHp >= 1 && opponent.currHp <= 0)
-        {
-            return "WIN";
-        }
-
-        else if(player.currHp <= 0 && opponent.currHp <= 0)
-        {
-            return "DRAW";
-        }
-
-        else if(opponent.currHp >= 1 && player.currHp <= 0)
-        {
-            return "LOSS";
-        }
-
-        else
-        {
-            return "NONE";
-        }
 
 
     }
