@@ -78,8 +78,7 @@ class Kaiju {
         this.maxHp = maxHp;
         this.initialMove = initialMove;
         this.currHp = maxHp;
-
-        this.firstMove = true;
+        this.lastMove = "";
 
         for(Move m: moves) {
             this.moves.put(m.name, m);
@@ -225,25 +224,25 @@ public class CombatSim {
      */
     public String stepRound() {
         // TODO: Place your code here
+        String res = "";
 
-        // kaiji1 first turn
-        stepTurn(1);
+        // kaiju1 first turn
+        res = stepTurn(1);
 
-        String name = "";
+        switch (res) {
+            case "WIN": return k1.getName();
+            case "LOSE": return k2.getName();
+            case "DRAW": return "DRAW";
+        }
 
-        if (this.k2.getHP() > 0)
-            stepTurn(2);
+        res = stepTurn(2);
+        switch (res) {
+            case "WIN": return k2.getName();
+            case "LOSE": return k1.getName();
+            case "DRAW": return "DRAW";
+        }
 
-        if (this.k1.getHP() > 0 || this.k2.getHP() > 0)
-            name = "NONE";
-        else if (this.k2.getHP() == 0 && this.k1.getHP() == 0) // enemy kaiju
-            name = "DRAW";
-        else if (this.k1.getHP() < 0)
-            name = this.k2.getName();
-        else if (this.k2.getHP() < 0)
-            name = this.k1.getName();
-
-        return name;
+        return "NONE";
     }
 
     /**
