@@ -2,14 +2,25 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
+import java.util.HashMap;
 
 /**
  This class models the intelligence of a kaiju.
  */
 class Kaiju {
-    // TODO: Place your code here
+
+
+    StringBuilder kb = new StringBuilder();
+    Map<String, String[]> transitions = new HashMap<>();
+    Map<String, String[]> moveRules = new HashMap<>();
+    Map<String, Move> moves = new HashMap<>();
+    String name;
+    String currentState;
+    String nextMove;
+    String[] states;
+    int currHp;
+    int maxHp;
 
     /**
      This basic constructor initializes the values for the kaiju intelligence
@@ -18,79 +29,40 @@ class Kaiju {
      Parameters:
      name          : String
      - name of kaiju
-
-
      states        : array-like of size (|Q|, )
      - list of Strings representing the states
-
      moves         : array-like of size (|M|,3)
      - list of moves. Each move is in the format (name,hpCost,dmg)
-
      transitions   : array-like of size (|f|,4)
      - list of transitions, each in the format
      (sourceState,moveName,status,destinationState) which denotes
      f(sourceState,moveName,status) = destinationState
-
-
      moveRules    : array-like of size (|f|,4)
      - list of transitions, each in the format
      (sourceState,moveName,status,responseMoveName) which denotes
      g(sourceState,moveName,status) = responseMoveName
-
-
      initialState : String
      - name of the initial state of the kaiju
-
-
      maxHp        : int
      - maximum hit points of the kaiju
-
-
      initialMove  : String
      - initial move of the kaiju
-
-
      */
-    private String name;
-    public String [] states;
-    public TreeMap<String, Move> moves;
-    public TreeMap<String, String[]> transitions;
-    public TreeMap<String, String[]> moveRules;
-    public String initialState;
-    public int maxHp;
-    public String initialMove;
-    public int currHp;
-
-    public String lastMove; // tracking kaiju's last move
-
-
-
     public Kaiju(String name, String[] states, Move[] moves,
-                 String[][] transitions, String[][] moveRules,
+                 Map<String, String[]> transitions, Map<String, String[]> moveRules,
                  String initialState, int maxHp, String initialMove){
 
         this.name = name;
         this.states = states;
-        this.moves = new TreeMap<String, Move>();
-        this.transitions = new TreeMap<String, String[]>();
-        this.moveRules = new TreeMap<String, String[]>();
-        this.initialState = initialState;
-        this.maxHp = maxHp;
-        this.initialMove = initialMove;
-        this.currHp = maxHp;
-        this.lastMove = initialMove;
+        this.currentState = initialState;
+        this.maxHp = currHp = maxHp;
+        this.nextMove = initialMove;
+        this.transitions = transitions;
+        this.moveRules = moveRules;
 
-        for(Move m: moves) {
-            this.moves.put(m.name, m);
-        }
+        for(int i = 0; i < moves.length; i++)
+            this.moves.put(moves[i].name, moves[i]);
 
-        for(String[] tr: transitions) {
-            this.transitions.put(tr[0] + " " + tr[1] + " " + tr[2], tr);
-        }
-
-        for(String[] mr: moveRules) {
-            this.moveRules.put(mr[0] + " " + mr[1] + " " + mr[2], mr);
-        }
     }
 
     /**
@@ -104,14 +76,16 @@ class Kaiju {
 
      Returns name of move to use in response.
      */
-    String applyTransition(String move, String status) {
-        // TODO: fill this with your own code
-        String moves = moveRules.get(initialState + " " + move + " " + status)[3];
-        initialState = transitions.get(initialState + " " + move + " " + status)[3];
+    String applyTransition(String move, String status){
+        kb.append(currentState).append(move).append(status);
+        String key = kb.toString();
+        String[] t = transitions.get(key);
+        String[] m = moveRules.get(key);
 
-        lastMove = moves;
-
-        return moves;
+        currentState = t[3];
+        nextMove = m[3];
+        kb.setLength(0);
+        return nextMove;
     }
 
     /**
@@ -120,11 +94,9 @@ class Kaiju {
      Returns a string indicating whether this kaiju is "ok" or "hurt".
      */
     public String getStatus(){
-        // TODO: Place your code here
-        if(2 * getHP() > this.maxHp)
+        if( 2 * currHp > maxHp)
             return "ok";
-        else
-            return "hurt";
+        else return "hurt";
     }
 
     /**
@@ -133,8 +105,7 @@ class Kaiju {
      Returns an integer indicating the current hit points of the kaiju.
      */
     public int getHP(){
-        // TODO: Place your code here
-        return this.currHp;
+        return currHp;
     }
 
     /**
@@ -143,8 +114,7 @@ class Kaiju {
      Returns a string indicating the name of the kaiju.
      */
     public String getName(){
-        // TODO: Place your code here
-        return this.name;
+        return name;
     }
 
     /**
@@ -155,37 +125,24 @@ class Kaiju {
      targetKaiju : Kaiju  - kaiju to use the move on
      */
     public void useMove(String moveName, Kaiju targetKaiju, StringBuilder sb){
-        // TODO: Place your code here
-
-        int damage = 0, hpCost = 0;
-
-
+        // You may print in this function.
         String key = moveName;
         Move m = moves.get(key);
 
-        this.currHp -= m.cost;
         targetKaiju.currHp -= m.dmg;
+        currHp -= m.cost;
 
+        if(currHp > maxHp)
+            currHp = maxHp;
+        else if(currHp < 0)
+            currHp = 0;
 
-
-
-        targetKaiju.currHp -= damage;
-        this.currHp -= hpCost;
-
-        if (this.currHp < 0)
-            this.currHp = 0;
-        if (targetKaiju.currHp < 0)
-            targetKaiju.currHp = 0;
-        if (this.currHp > this.maxHp)
-            this.currHp = this.maxHp;
-        if (targetKaiju.currHp > targetKaiju.maxHp)
+        if(targetKaiju.currHp > targetKaiju.maxHp)
             targetKaiju.currHp = targetKaiju.maxHp;
+        else if(targetKaiju.currHp < 0)
+            targetKaiju.currHp = 0;
 
-
-
-
-
-        sb.append(String.format("%s used %s\n%s HP: %d; %s HP: %d\n", getName(), moveName, getName(), getHP(), targetKaiju.getName(), targetKaiju.getHP()));
+        sb.append(String.format("%s used %s\n%s HP: %d; %s HP: %d\n", name, m.name, name, currHp, targetKaiju.name, targetKaiju.currHp));
     }
 }
 
@@ -195,13 +152,11 @@ class Kaiju {
 public class CombatSim {
     public static StringBuilder sb;
     public static BufferedReader br;
-    // TODO: Place your code here
-
     public Kaiju k1;
     public Kaiju k2;
 
-
     boolean initial = true;
+
     /**
      This constructor initializes the values of the kaiju combat simulator
 
@@ -210,9 +165,8 @@ public class CombatSim {
      kaiju2 : Kaiju - second kaiju in battle
      */
     public CombatSim(Kaiju kaiju1, Kaiju kaiju2) {
-        // TODO: Place your code here
-        this.k1 = kaiju1;
-        this.k2 = kaiju2;
+        k1 = kaiju1;
+        k2 = kaiju2;
     }
 
     /**
@@ -223,26 +177,23 @@ public class CombatSim {
      a draw, return "DRAW". If there is no winner yet,
      value is "NONE"
      */
-    public String stepRound() {
-        // TODO: Place your code here
-        String res = "";
+    public String stepRound(){
+        String res;
 
-        // kaiju1 first turn
         res = stepTurn(1);
+        switch(res) {
 
-        switch (res) {
-            case "WIN": return k1.getName();
-            case "LOSE": return k2.getName();
+            case "WIN":  return k1.name;
+            case "LOSS": return k2.name;
             case "DRAW": return "DRAW";
         }
-
         res = stepTurn(2);
-        switch (res) {
-            case "WIN": return k2.getName();
-            case "LOSE": return k1.getName();
+        switch(res) {
+
+            case "WIN":  return k2.name;
+            case "LOSS": return k1.name;
             case "DRAW": return "DRAW";
         }
-
         return "NONE";
     }
 
@@ -256,17 +207,11 @@ public class CombatSim {
      both kaiju got knocked out, "LOSS" if only the kaiju taking their turn was
      knocked out, and "NONE" otherwise
      */
-    public String stepTurn(int kaijuId) {
-        // TODO: Place your code here
+    public String stepTurn(int kaijuId){
 
 
         Kaiju player;
         Kaiju opponent;
-        String lastMove;
-
-
-        //k1 - player
-        //k2 - opponent
 
 
         if(kaijuId == 1)
@@ -287,7 +232,7 @@ public class CombatSim {
 
         if(initial)
         {
-            player.useMove(player.initialMove, opponent, sb);
+            player.useMove(player.nextMove, opponent, sb);
             initial = false;
 
         }
@@ -296,7 +241,7 @@ public class CombatSim {
         else
         {
 
-            player.useMove(player.applyTransition(opponent.lastMove, opponent.getStatus()), opponent, sb);
+            player.useMove(player.applyTransition(opponent.nextMove, opponent.getStatus()), opponent, sb);
 
             if(player.currHp <= 0 && opponent.currHp <= 0)
                 return "DRAW";
@@ -311,6 +256,9 @@ public class CombatSim {
 
 
         return "NONE";
+
+
+
 
 
 
@@ -376,6 +324,11 @@ public class CombatSim {
         String[][] moveFunc = new String[stateCtr * moves.length * 2][4];
         int ind = 0;
 
+        Map<String, String[]> t = new HashMap<>();
+        Map<String, String[]> mF = new HashMap<>();
+        String key;
+        StringBuilder kb = new StringBuilder();
+
         // read transition and move functions
         for(String state : states) {
             for(Move move : moves) {
@@ -387,7 +340,15 @@ public class CombatSim {
                     transitions[ind][2] = moveFunc[ind][2] = status;
                     transitions[ind][3] = targState;
                     moveFunc[ind][3] = targMove;
+
+                    kb.append(transitions[ind][0]).append(transitions[ind][1]).append(transitions[ind][2]);
+                    key = kb.toString();
+
+                    t.put(key, transitions[ind]);
+                    mF.put(key, moveFunc[ind]);
+
                     ind++;
+                    kb.setLength(0);
                 }
             }
         }
@@ -398,7 +359,7 @@ public class CombatSim {
         int maxHp = Integer.parseInt(parts[1]);
         String initMove = br.readLine().trim();
 
-        return new Kaiju(name,states,moves,transitions,moveFunc,initState,
+        return new Kaiju(name,states,moves,t,mF,initState,
                 maxHp,initMove);
     }
 }
@@ -407,7 +368,6 @@ class Move {
     public String name;
     public int cost;
     public int dmg;
-
     Move(String name, int cost, int dmg) {
         this.name = name;
         this.cost = cost;
