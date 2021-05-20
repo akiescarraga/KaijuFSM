@@ -60,9 +60,8 @@ class Kaiju {
         this.transitions = transitions;
         this.moveRules = moveRules;
 
-        for(int i = 0; i < moves.length; i++)
-            this.moves.put(moves[i].name, moves[i]);
-
+        for (Move move : moves)
+            this.moves.put(move.name, move);
     }
 
     /**
@@ -188,6 +187,7 @@ public class CombatSim {
             case "DRAW": return "DRAW";
         }
         res = stepTurn(2);
+
         switch(res) {
 
             case "WIN":  return k2.name;
@@ -208,60 +208,34 @@ public class CombatSim {
      knocked out, and "NONE" otherwise
      */
     public String stepTurn(int kaijuId){
+        if(kaijuId == 1){
 
+            if(initial){
+                k1.useMove(k1.nextMove, k2, sb);
+                initial = false;
+            }
+            else
+                k1.useMove(k1.applyTransition(k2.nextMove, k2.getStatus()), k2, sb);
 
-        Kaiju player;
-        Kaiju opponent;
-
-
-        if(kaijuId == 1)
-        {
-            player = this.k1;
-            opponent = this.k2;
-        }
-
-        else // k2's turn
-        {
-            player = this.k2;
-            opponent = this.k1;
-
-        }
-
-
-
-
-        if(initial)
-        {
-            player.useMove(player.nextMove, opponent, sb);
-            initial = false;
-
-        }
-
-
-        else
-        {
-
-            player.useMove(player.applyTransition(opponent.nextMove, opponent.getStatus()), opponent, sb);
-
-            if(player.currHp <= 0 && opponent.currHp <= 0)
+            if(k1.currHp <= 0 && k2.currHp <= 0)
                 return "DRAW";
-            else if(opponent.currHp <= 0)
+            else if(k2.currHp <= 0)
                 return "WIN";
-            else if(player.currHp <= 0)
+            else if(k1.currHp <= 0)
                 return "LOSS";
-
-
         }
+        else {
+            k2.useMove(k2.applyTransition(k1.nextMove, k1.getStatus()), k1, sb);
 
-
+            if(k1.currHp <= 0 && k2.currHp <= 0)
+                return "DRAW";
+            else if(k1.currHp <= 0)
+                return "WIN";
+            else if(k2.currHp <= 0)
+                return "LOSS";
+        }
 
         return "NONE";
-
-
-
-
-
-
     }
 
     public static void main(String[] args) throws Exception{
