@@ -159,16 +159,15 @@ class Kaiju {
 
         int damage = 0, hpCost = 0;
 
-        Set<String> set1 = this.moves.keySet();
 
-        for(String key : set1) {
-            if(key.equals(moveName))
-            {
-                damage = this.moves.get(key).dmg;
-                hpCost = this.moves.get(key).cost;
-            }
+        String key = moveName;
+        Move m = moves.get(key);
 
-        }
+        this.currHp -= m.cost;
+        targetKaiju.currHp -= m.dmg;
+
+
+
 
         targetKaiju.currHp -= damage;
         this.currHp -= hpCost;
@@ -181,6 +180,8 @@ class Kaiju {
             this.currHp = this.maxHp;
         if (targetKaiju.currHp > targetKaiju.maxHp)
             targetKaiju.currHp = targetKaiju.maxHp;
+
+
 
 
 
